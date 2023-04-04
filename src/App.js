@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useEffect, useState } from "react";
+import { fetchPokemons } from "./api/fetchPokemons";
+import PokemonCard from "./components/PokemonCard/PokemonCard";
 function App() {
+  const [theme, setTheme] = useState("light");
+  const [pokemonList, setPokemonList] = useState([]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+  };
+
+  useEffect(() => {
+    fetchPokemons().then((pokeList) => setPokemonList(pokeList.data.results));
+  }, []);
+  console.log(pokemonList, "pokemon list state");
+
+  // console.log(pokeList, "pokemon list");
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={`app ${theme}`}>
+      <div className="container">
+        <button onClick={toggleTheme}>Change Theme</button>
+        <div className="pokemonList">
+          {pokemonList.map((pokemon) => (
+            <PokemonCard key={pokemon.name} pokemon={pokemon} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
